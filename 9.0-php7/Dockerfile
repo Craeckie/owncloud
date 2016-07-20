@@ -1,4 +1,4 @@
-FROM php:7.0-apache
+FROM php:7-apache
 
 RUN apt-get update && apt-get dist-upgrade -y && apt-get install -y --no-install-recommends \
 	bzip2 \
