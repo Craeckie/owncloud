@@ -1,4 +1,4 @@
-FROM php:7.0-apache
+FROM php:7-apache
 
 RUN apt-get update && apt-get dist-upgrade -y && apt-get install -y --no-install-recommends \
 	bzip2 \
@@ -35,7 +35,7 @@ RUN pecl install APCu \
         && docker-php-ext-enable apcu
 
 
-ENV OWNCLOUD_VERSION 9.0.5
+ENV OWNCLOUD_VERSION 9.1.0
 VOLUME /var/www/html
 
 RUN curl -fsSL -o owncloud.tar.bz2 \

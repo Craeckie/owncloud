@@ -1,4 +1,4 @@
-FROM php:7.0-apache
+FROM php:7-apache
 
 RUN apt-get update && apt-get dist-upgrade -y && apt-get install -y --no-install-recommends \
 	bzip2 \
@@ -32,10 +32,11 @@ RUN { \
 
 # PECL extensions
 RUN pecl install APCu \
-        && docker-php-ext-enable apcu
+        && pecl install redis \
+        && docker-php-ext-enable apcu redis
 
 
-ENV OWNCLOUD_VERSION 9.0.5
+ENV OWNCLOUD_VERSION 9.0.4
 VOLUME /var/www/html
 
 RUN curl -fsSL -o owncloud.tar.bz2 \
