@@ -31,12 +31,11 @@ RUN { \
 	} > /usr/local/etc/php/conf.d/opcache-recommended.ini
 
 # PECL extensions
-RUN pecl install APCu \
-    && pecl install memcached \
-    && docker-php-ext-enable apcu memcached
+RUN docker-php-ext-install APCu memcached
+#	&& docker-php-ext-enable apcu
 
 
-ENV OWNCLOUD_VERSION 9.0.9
+ENV OWNCLOUD_VERSION 9.0.4
 VOLUME /var/www/html
 
 RUN curl -fsSL -o owncloud.tar.bz2 \
