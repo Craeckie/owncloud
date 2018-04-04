@@ -32,16 +32,19 @@ RUN { \
 
 # PECL extensions
 RUN pecl install APCu \
-        && docker-php-ext-enable apcu
+        && pecl install memcached-3.0.3 \
+        && docker-php-ext-enable apcu memcached
 
 
-ENV OWNCLOUD_VERSION 9.1.7
+ENV OWNCLOUD_VERSION 9.1.8
+ENV OWNCLOUD_SHA256 2b688327a2f986236e14b81dffcf684f730f61946d8035e99a6d032083c1ef19
 VOLUME /var/www/html
 
-RUN curl -fsSL -o owncloud.tar.bz2 \
+RUN curl -fL -o owncloud.tar.bz2 \
 		"https://download.owncloud.org/community/owncloud-${OWNCLOUD_VERSION}.tar.bz2" \
-	&& curl -fsSL -o owncloud.tar.bz2.asc \
+	&& curl -fL -o owncloud.tar.bz2.asc \
 		"https://download.owncloud.org/community/owncloud-${OWNCLOUD_VERSION}.tar.bz2.asc" \
+        && echo "$OWNCLOUD_SHA256 *owncloud.tar.bz2" | sha256sum -c - \
 	&& export GNUPGHOME="$(mktemp -d)" \
 # gpg key from https://owncloud.org/owncloud.asc
 	&& gpg --keyserver ha.pool.sks-keyservers.net --recv-keys E3036906AD9F30807351FAC32D5D5E97F6978A26 \
@@ -50,7 +53,8 @@ RUN curl -fsSL -o owncloud.tar.bz2 \
 	&& tar -xjf owncloud.tar.bz2 -C /usr/src/ \
 	&& rm owncloud.tar.bz2
 
-COPY docker-entrypoint.sh /entrypoint.sh
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN ln -s usr/local/bin/docker-entrypoint.sh /entrypoint.sh # backwards compat
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["apache2-foreground"]
